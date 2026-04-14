@@ -10,6 +10,16 @@ $navLinks = array(
     'advertise-partner' => 'Advertise',
     'contact' => 'Contact'
 );
+$mobileLinks = array(
+    array('route' => 'home', 'url' => url('/'), 'label' => 'Home', 'icon' => 'home'),
+    array('route' => 'listen-live', 'url' => url('listen-live'), 'label' => 'Listen Live', 'icon' => 'radio', 'badge' => 'LIVE'),
+    array('route' => 'shows', 'url' => url('shows'), 'label' => 'Shows', 'icon' => 'podcasts'),
+    array('route' => 'dramas', 'url' => url('dramas'), 'label' => 'Dramas', 'icon' => 'theater_comedy'),
+    array('route' => 'news', 'url' => url('news'), 'label' => 'News', 'icon' => 'newspaper'),
+    array('route' => 'about', 'url' => url('about'), 'label' => 'About', 'icon' => 'info'),
+    array('route' => 'advertise-partner', 'url' => url('advertise-partner'), 'label' => 'Advertise', 'icon' => 'campaign'),
+    array('route' => 'contact', 'url' => url('contact'), 'label' => 'Contact', 'icon' => 'call')
+);
 $socialLinks = array(
     array('url' => setting('social_facebook_url', 'https://www.facebook.com/share/1CK8U1M63U/'), 'icon' => 'public', 'label' => 'Facebook'),
     array('url' => setting('social_x_url', 'https://x.com/ekofmkotido'), 'icon' => 'alternate_email', 'label' => 'X'),
@@ -79,31 +89,53 @@ $siteLogo = setting('site_logo', '');
         <button class="mobile-menu-backdrop" type="button" data-menu-close aria-label="Close menu"></button>
         <div class="mobile-menu-sheet" role="dialog" aria-modal="true" aria-label="Mobile navigation">
             <div class="mobile-menu-head">
-                <span class="mobile-menu-title">MENU</span>
+                <div class="mobile-menu-brand">
+                    <span class="mobile-brand-avatar">
+                        <?php if ($siteLogo !== ''): ?>
+                            <img src="<?php echo e(media_url($siteLogo)); ?>" alt="EKO FM">
+                        <?php else: ?>
+                            <span class="material-symbols-outlined">radio</span>
+                        <?php endif; ?>
+                    </span>
+                    <span class="mobile-menu-title">MENU</span>
+                </div>
                 <button type="button" class="mobile-close" data-menu-close aria-label="Close menu">
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
-            <ul class="mobile-nav-list">
-                <?php foreach ($navLinks as $slug => $label): ?>
-                    <li class="mobile-nav-item">
-                        <a class="mobile-nav-link <?php echo $currentRoute === $slug ? 'active' : ''; ?>" href="<?php echo e($slug === 'home' ? url('/') : url($slug)); ?>" data-pjax>
-                            <span><?php echo e($label); ?></span>
-                            <span class="material-symbols-outlined">arrow_forward</span>
+            <nav class="mobile-nav-group" aria-label="Mobile navigation links">
+                <ul class="mobile-nav-list">
+                    <?php foreach ($mobileLinks as $item): ?>
+                        <li class="mobile-nav-item">
+                            <a href="<?php echo e($item['url']); ?>" data-pjax class="mobile-nav-link <?php echo $currentRoute === $item['route'] ? 'active' : ''; ?>">
+                                <span class="mobile-nav-link-main">
+                                    <span class="material-symbols-outlined mobile-nav-icon"><?php echo e($item['icon']); ?></span>
+                                    <span><?php echo e($item['label']); ?></span>
+                                    <?php if (isset($item['badge'])): ?>
+                                        <span class="mobile-nav-badge"><?php echo e($item['badge']); ?></span>
+                                    <?php endif; ?>
+                                </span>
+                                <span class="material-symbols-outlined mobile-nav-arrow">chevron_right</span>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </nav>
+
+            <div class="mobile-menu-foot">
+                <div class="mobile-social-grid" aria-label="Social links">
+                    <?php foreach (array_slice($socialLinks, 0, 4) as $social): ?>
+                        <a href="<?php echo e($social['url']); ?>" target="_blank" rel="noopener" aria-label="<?php echo e($social['label']); ?>">
+                            <span class="material-symbols-outlined"><?php echo e($social['icon']); ?></span>
+                            <?php echo e($social['label']); ?>
                         </a>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
+                    <?php endforeach; ?>
+                </div>
 
-            <a href="<?php echo e(url('listen-live')); ?>" data-pjax class="btn btn-live glow-button mobile-listen-btn">Listen Live</a>
-
-            <div class="mobile-social-grid">
-                <?php foreach ($socialLinks as $social): ?>
-                    <a href="<?php echo e($social['url']); ?>" target="_blank" rel="noopener">
-                        <span class="material-symbols-outlined"><?php echo e($social['icon']); ?></span>
-                        <?php echo e($social['label']); ?>
-                    </a>
-                <?php endforeach; ?>
+                <a href="<?php echo e(url('contact')); ?>" data-pjax class="mobile-contact-shortcut">
+                    <span class="material-symbols-outlined">support_agent</span>
+                    Contact the Studio
+                </a>
             </div>
         </div>
     </div>

@@ -3,29 +3,38 @@ $streamUrl = setting('radio_stream_url', 'https://5.39.82.219/22094/listen.mp3')
 $streamTitle = setting('radio_stream_title', 'Now Playing: EKO FM Live');
 $embedScript = setting('radio_embed_script', '//myradiostream.com/embed/mayugefmuganda');
 ?>
-<div id="live-player" class="player-shell">
-    <div class="container-xxl">
-        <div class="player-bar floating-card">
-            <div class="player-meta">
-                <span class="dot-live"></span>
-                <div>
-                    <small class="d-block text-uppercase">Live Broadcast - Always On</small>
-                    <strong id="stream-title"><?php echo e($streamTitle); ?></strong>
-                </div>
-            </div>
+<div id="live-player" class="radio-player player-shell">
+    <div class="player-top">
+        <div class="status">
+            <span class="dot-live"></span>
+            <span>LIVE BROADCAST</span>
+            <span class="live-wave" style="margin-left: 8px;">
+                <span></span><span></span><span></span>
+            </span>
+        </div>
+        <button id="player-minimize" class="collapse-btn" aria-label="Toggle player">
+            <span class="material-symbols-outlined">expand_more</span>
+        </button>
+    </div>
 
-            <div class="player-controls">
-                <button id="player-toggle" class="btn-icon" type="button" aria-label="Play/Pause">
+    <div class="player-body">
+        <div class="info">
+           <!-- <h3>Now Playing</h3>
+            <p id="stream-title"><?php echo e($streamTitle); ?></p> -->
+
+            <div class="controls">
+                <button id="player-toggle" class="play-btn" aria-label="Play/Pause">
                     <span class="material-symbols-outlined">play_arrow</span>
                 </button>
-                <input id="player-volume" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
+                <div class="volume-container" style="display:flex; align-items:center; gap: 8px; flex:1;">
+                    <span class="material-symbols-outlined" style="font-size: 18px; opacity: 0.7;">volume_up</span>
+                    <input id="player-volume" type="range" min="0" max="1" step="0.01" value="0.8">
+                </div>
             </div>
-
-            <div class="player-right">
-                <span class="badge-live">LIVE</span>
-                <button id="player-minimize" class="player-toggle-min" type="button" aria-label="Toggle player compact mode">
-                    <span class="material-symbols-outlined" style="font-size:18px;">expand_more</span>
-                </button>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                <!--<span class="live-badge">LIVE</span>
+                <span style="font-size: 11px; opacity: 0.7; font-weight: 500;">Listeners: <span id="listeners-count">Loading...</span></span> -->
             </div>
         </div>
     </div>

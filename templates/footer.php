@@ -27,7 +27,10 @@
                         <a href="<?php echo e(setting('social_tiktok_url', 'https://www.tiktok.com/@91.2.eko.fm?_r=1&_t=ZS-94z2dBOly7A')); ?>" target="_blank"><span class="material-symbols-outlined" style="font-size:16px;">music_note</span>TikTok</a>
                         <a href="<?php echo e(setting('social_youtube_url', 'https://youtube.com/@ekofm-x2n1l?si=p2Z3IpjNiSMWvnBq')); ?>" target="_blank"><span class="material-symbols-outlined" style="font-size:16px;">smart_display</span>YouTube</a>
                     </div>
-                    <small class="d-block mt-3 opacity-75">&copy; <?php echo e(date('Y')); ?> EKO FM. All rights reserved.</small>
+                    <small class="d-block mt-3 opacity-75">
+                        &copy; <?php echo e(date('Y')); ?> EKO FM. All rights reserved. <br>
+                        Crafted by <a href="https://www.almatechconsults.com/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">Alma Tech Labs Inc</a>
+                    </small>
                 </div>
             </div>
         </div>

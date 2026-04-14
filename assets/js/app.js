@@ -16,6 +16,7 @@
         if (panel) {
             panel.classList.remove('is-open');
             panel.setAttribute('hidden', 'hidden');
+            panel.setAttribute('aria-hidden', 'true');
         }
 
         if (toggle) {
@@ -94,12 +95,16 @@
         var followMenu = document.querySelector('[data-follow-menu]');
         var followToggle = followMenu ? followMenu.querySelector('.follow-toggle') : null;
         var closeButtons = panel ? panel.querySelectorAll('[data-menu-close]') : [];
+        var primaryClose = panel ? panel.querySelector('.mobile-close') : null;
+        var firstLink = panel ? panel.querySelector('.mobile-nav-link') : null;
+        var lastFocusedElement = null;
 
         if (!panel || !header || !toggle || panel.getAttribute('data-menu-bound') === '1') {
             return;
         }
 
         panel.setAttribute('data-menu-bound', '1');
+        panel.setAttribute('aria-hidden', 'true');
         var hideTimer = null;
 
         var openMenu = function () {
@@ -107,18 +112,35 @@
                 window.clearTimeout(hideTimer);
                 hideTimer = null;
             }
+
+            lastFocusedElement = document.activeElement;
             panel.removeAttribute('hidden');
             window.requestAnimationFrame(function () {
                 panel.classList.add('is-open');
             });
+            panel.setAttribute('aria-hidden', 'false');
             header.classList.add('menu-open');
             document.body.classList.add('menu-locked');
             toggle.setAttribute('aria-expanded', 'true');
             toggle.setAttribute('aria-label', 'Close menu');
+
+            window.setTimeout(function () {
+                if (primaryClose) {
+                    primaryClose.focus();
+                } else if (firstLink) {
+                    firstLink.focus();
+                }
+            }, 120);
         };
 
         var closeMenu = function () {
             panel.classList.remove('is-open');
+            panel.setAttribute('aria-hidden', 'true');
+
+            if (hideTimer) {
+                window.clearTimeout(hideTimer);
+            }
+
             hideTimer = window.setTimeout(function () {
                 panel.setAttribute('hidden', 'hidden');
             }, 380);
@@ -126,6 +148,12 @@
             document.body.classList.remove('menu-locked');
             toggle.setAttribute('aria-expanded', 'false');
             toggle.setAttribute('aria-label', 'Open menu');
+
+            if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+                lastFocusedElement.focus();
+            } else {
+                toggle.focus();
+            }
         };
 
         toggle.addEventListener('click', function () {
@@ -347,6 +375,10 @@
         var next = root.querySelector('[data-hero-next]');
         var index = 0;
         var interval = null;
+        var touchStartX = 0;
+        var touchStartY = 0;
+        var hasTouchStart = false;
+        var touchThreshold = 44;
 
         var setActive = function (nextIndex) {
             if (nextIndex < 0) {
@@ -384,35 +416,131 @@
             }, 6500);
         };
 
+        var onPrev = function () {
+            setActive(index - 1);
+            startAuto();
+        };
+
+        var onNext = function () {
+            setActive(index + 1);
+            startAuto();
+        };
+
+        var onDotClick = function () {
+            var targetIndex = parseInt(this.getAttribute('data-hero-dot') || '0', 10);
+            setActive(targetIndex);
+            startAuto();
+        };
+
+        var onMouseEnter = function () {
+            stopAuto();
+        };
+
+        var onMouseLeave = function () {
+            startAuto();
+        };
+
+        var onFocusIn = function () {
+            stopAuto();
+        };
+
+        var onFocusOut = function (event) {
+            if (root.contains(event.relatedTarget)) {
+                return;
+            }
+            startAuto();
+        };
+
+        var onTouchStart = function (event) {
+            if (!event.touches || !event.touches.length) {
+                return;
+            }
+            touchStartX = event.touches[0].clientX;
+            touchStartY = event.touches[0].clientY;
+            hasTouchStart = true;
+            stopAuto();
+        };
+
+        var onTouchEnd = function (event) {
+            if (!hasTouchStart) {
+                return;
+            }
+
+            var touch = event.changedTouches && event.changedTouches.length ? event.changedTouches[0] : null;
+            if (!touch) {
+                hasTouchStart = false;
+                startAuto();
+                return;
+            }
+
+            var deltaX = touch.clientX - touchStartX;
+            var deltaY = touch.clientY - touchStartY;
+            hasTouchStart = false;
+
+            if (Math.abs(deltaX) > touchThreshold && Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX > 0) {
+                    setActive(index - 1);
+                } else {
+                    setActive(index + 1);
+                }
+            }
+
+            startAuto();
+        };
+
+        var onVisibilityChange = function () {
+            if (document.hidden) {
+                stopAuto();
+            } else {
+                startAuto();
+            }
+        };
+
         if (prev) {
-            prev.addEventListener('click', function () {
-                setActive(index - 1);
-            });
+            prev.addEventListener('click', onPrev);
         }
 
         if (next) {
-            next.addEventListener('click', function () {
-                setActive(index + 1);
-            });
+            next.addEventListener('click', onNext);
         }
 
         for (var d = 0; d < dots.length; d++) {
-            dots[d].addEventListener('click', function () {
-                var targetIndex = parseInt(this.getAttribute('data-hero-dot') || '0', 10);
-                setActive(targetIndex);
-            });
+            dots[d].addEventListener('click', onDotClick);
         }
 
-        root.addEventListener('mouseenter', stopAuto);
-        root.addEventListener('mouseleave', startAuto);
-        root.addEventListener('focusin', stopAuto);
-        root.addEventListener('focusout', startAuto);
+        root.addEventListener('mouseenter', onMouseEnter);
+        root.addEventListener('mouseleave', onMouseLeave);
+        root.addEventListener('focusin', onFocusIn);
+        root.addEventListener('focusout', onFocusOut);
+        root.addEventListener('touchstart', onTouchStart, { passive: true });
+        root.addEventListener('touchend', onTouchEnd, { passive: true });
+        document.addEventListener('visibilitychange', onVisibilityChange);
 
         setActive(0);
         startAuto();
 
         window.__ekoHeroSliderDestroy = function () {
             stopAuto();
+
+            if (prev) {
+                prev.removeEventListener('click', onPrev);
+            }
+
+            if (next) {
+                next.removeEventListener('click', onNext);
+            }
+
+            for (var i = 0; i < dots.length; i++) {
+                dots[i].removeEventListener('click', onDotClick);
+            }
+
+            root.removeEventListener('mouseenter', onMouseEnter);
+            root.removeEventListener('mouseleave', onMouseLeave);
+            root.removeEventListener('focusin', onFocusIn);
+            root.removeEventListener('focusout', onFocusOut);
+            root.removeEventListener('touchstart', onTouchStart);
+            root.removeEventListener('touchend', onTouchEnd);
+            document.removeEventListener('visibilitychange', onVisibilityChange);
         };
     }
 
