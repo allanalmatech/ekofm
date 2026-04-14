@@ -1,0 +1,15 @@
+RewriteEngine On
+
+# Skip rewrite for existing files/directories
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Admin area direct files
+RewriteRule ^admin/(.*)$ admin/$1 [L,QSA]
+
+# Pretty routes to front controller
+RewriteRule ^news/([a-zA-Z0-9-]+)/?$ index.php?route=news-single&slug=$1 [L,QSA]
+RewriteRule ^shows/([a-zA-Z0-9-]+)/?$ index.php?route=show-detail&slug=$1 [L,QSA]
+RewriteRule ^search/?$ index.php?route=search [L,QSA]
+RewriteRule ^([a-zA-Z0-9-]+)/?$ index.php?route=$1 [L,QSA]
