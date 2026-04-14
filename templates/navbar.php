@@ -79,7 +79,7 @@ $siteLogo = setting('site_logo', '');
         <button class="mobile-menu-backdrop" type="button" data-menu-close aria-label="Close menu"></button>
         <div class="mobile-menu-sheet" role="dialog" aria-modal="true" aria-label="Mobile navigation">
             <div class="mobile-menu-head">
-                <span class="mobile-menu-title">Main Menu</span>
+                <span class="mobile-menu-title">MENU</span>
                 <button type="button" class="mobile-close" data-menu-close aria-label="Close menu">
                     <span class="material-symbols-outlined">close</span>
                 </button>

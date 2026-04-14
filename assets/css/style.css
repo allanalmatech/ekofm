@@ -431,7 +431,7 @@ body[data-home="0"] .site-header .header-menu-content {
 .mobile-menu-panel {
     position: fixed;
     inset: 0;
-    z-index: 1090;
+    z-index: 1400;
     pointer-events: none;
 }
 
