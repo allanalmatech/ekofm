@@ -68,7 +68,25 @@ $siteLogo = setting('site_logo', '');
                             <div class="follow-popover" id="followMenuPanel" role="menu">
                                 <?php foreach ($socialLinks as $social): ?>
                                     <a href="<?php echo e($social['url']); ?>" target="_blank" rel="noopener" role="menuitem">
-                                        <span class="material-symbols-outlined"><?php echo e($social['icon']); ?></span>
+                                        <?php if ($social['label'] === 'Facebook'): ?>
+                                            <svg class="social-icon-facebook" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                                <path d="M13.5 22v-8h2.7l.4-3.1h-3.1V8.9c0-.9.3-1.5 1.6-1.5h1.7V4.6c-.3 0-1.3-.1-2.5-.1-2.4 0-4 1.4-4 4.1v2.3H8V14h2.8v8h2.7z"></path>
+                                            </svg>
+                                        <?php elseif ($social['label'] === 'X'): ?>
+                                            <svg class="social-icon-x" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                                <path d="M18.9 2H22l-6.8 7.8L23 22h-6.2l-4.9-6.4L6.3 22H3.2l7.3-8.4L1 2h6.3l4.4 5.8L18.9 2zm-1.1 18h1.7L6.4 3.9H4.6L17.8 20z"></path>
+                                            </svg>
+                                        <?php elseif ($social['label'] === 'TikTok'): ?>
+                                            <svg class="social-icon-tiktok" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                                <path d="M14 3c.5 1.6 1.4 2.8 2.8 3.6 1 .5 2 .8 3.2.8v3.1c-1.5 0-2.8-.3-4-.9v6.2c0 3.2-2.6 5.7-5.8 5.7-3.2 0-5.8-2.5-5.8-5.7S7 10 10.2 10c.3 0 .7 0 1 .1v3.2c-.3-.1-.6-.2-1-.2-1.4 0-2.6 1.1-2.6 2.6s1.2 2.6 2.6 2.6c1.5 0 2.6-1.1 2.6-2.6V3h1.2z"></path>
+                                            </svg>
+                                        <?php elseif ($social['label'] === 'YouTube'): ?>
+                                            <svg class="social-icon-youtube" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                                <path d="M23 12s0-3.1-.4-4.6c-.2-.9-.9-1.6-1.8-1.9C19.3 5 12 5 12 5s-7.3 0-8.8.5c-.9.3-1.6 1-1.8 1.9C1 8.9 1 12 1 12s0 3.1.4 4.6c.2.9.9 1.6 1.8 1.9C4.7 19 12 19 12 19s7.3 0 8.8-.5c.9-.3 1.6-1 1.8-1.9.4-1.5.4-4.6.4-4.6zM10 15.5v-7l6 3.5-6 3.5z"></path>
+                                            </svg>
+                                        <?php else: ?>
+                                            <span class="material-symbols-outlined"><?php echo e($social['icon']); ?></span>
+                                        <?php endif; ?>
                                         <?php echo e($social['label']); ?>
                                     </a>
                                 <?php endforeach; ?>
@@ -88,21 +106,19 @@ $siteLogo = setting('site_logo', '');
     <div class="mobile-menu-panel" id="mainNavPanel" hidden>
         <button class="mobile-menu-backdrop" type="button" data-menu-close aria-label="Close menu"></button>
         <div class="mobile-menu-sheet" role="dialog" aria-modal="true" aria-label="Mobile navigation">
-            <div class="mobile-menu-head">
-                <div class="mobile-menu-brand">
-                    <span class="mobile-brand-avatar">
-                        <?php if ($siteLogo !== ''): ?>
-                            <img src="<?php echo e(media_url($siteLogo)); ?>" alt="EKO FM">
-                        <?php else: ?>
-                            <span class="material-symbols-outlined">radio</span>
-                        <?php endif; ?>
-                    </span>
-                    <span class="mobile-menu-title">MENU</span>
-                </div>
+            <div class="mobile-menu-head mobile-menu-head-centered">
+                <span class="mobile-brand-avatar mobile-brand-avatar-lg" aria-hidden="true">
+                    <?php if ($siteLogo !== ''): ?>
+                        <img src="<?php echo e(media_url($siteLogo)); ?>" alt="EKO FM">
+                    <?php else: ?>
+                        <span class="material-symbols-outlined">radio</span>
+                    <?php endif; ?>
+                </span>
                 <button type="button" class="mobile-close" data-menu-close aria-label="Close menu">
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
+
             <nav class="mobile-nav-group" aria-label="Mobile navigation links">
                 <ul class="mobile-nav-list">
                     <?php foreach ($mobileLinks as $item): ?>
@@ -124,10 +140,27 @@ $siteLogo = setting('site_logo', '');
 
             <div class="mobile-menu-foot">
                 <div class="mobile-social-grid" aria-label="Social links">
-                    <?php foreach (array_slice($socialLinks, 0, 4) as $social): ?>
+                    <?php foreach (array_slice($socialLinks, 0, 5) as $social): ?>
                         <a href="<?php echo e($social['url']); ?>" target="_blank" rel="noopener" aria-label="<?php echo e($social['label']); ?>">
-                            <span class="material-symbols-outlined"><?php echo e($social['icon']); ?></span>
-                            <?php echo e($social['label']); ?>
+                            <?php if ($social['label'] === 'Facebook'): ?>
+                                <svg class="social-icon-facebook" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <path d="M13.5 22v-8h2.7l.4-3.1h-3.1V8.9c0-.9.3-1.5 1.6-1.5h1.7V4.6c-.3 0-1.3-.1-2.5-.1-2.4 0-4 1.4-4 4.1v2.3H8V14h2.8v8h2.7z"></path>
+                                </svg>
+                            <?php elseif ($social['label'] === 'X'): ?>
+                                <svg class="social-icon-x" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <path d="M18.9 2H22l-6.8 7.8L23 22h-6.2l-4.9-6.4L6.3 22H3.2l7.3-8.4L1 2h6.3l4.4 5.8L18.9 2zm-1.1 18h1.7L6.4 3.9H4.6L17.8 20z"></path>
+                                </svg>
+                            <?php elseif ($social['label'] === 'TikTok'): ?>
+                                <svg class="social-icon-tiktok" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <path d="M14 3c.5 1.6 1.4 2.8 2.8 3.6 1 .5 2 .8 3.2.8v3.1c-1.5 0-2.8-.3-4-.9v6.2c0 3.2-2.6 5.7-5.8 5.7-3.2 0-5.8-2.5-5.8-5.7S7 10 10.2 10c.3 0 .7 0 1 .1v3.2c-.3-.1-.6-.2-1-.2-1.4 0-2.6 1.1-2.6 2.6s1.2 2.6 2.6 2.6c1.5 0 2.6-1.1 2.6-2.6V3h1.2z"></path>
+                                </svg>
+                            <?php elseif ($social['label'] === 'YouTube'): ?>
+                                <svg class="social-icon-youtube" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <path d="M23 12s0-3.1-.4-4.6c-.2-.9-.9-1.6-1.8-1.9C19.3 5 12 5 12 5s-7.3 0-8.8.5c-.9.3-1.6 1-1.8 1.9C1 8.9 1 12 1 12s0 3.1.4 4.6c.2.9.9 1.6 1.8 1.9C4.7 19 12 19 12 19s7.3 0 8.8-.5c.9-.3 1.6-1 1.8-1.9.4-1.5.4-4.6.4-4.6zM10 15.5v-7l6 3.5-6 3.5z"></path>
+                                </svg>
+                            <?php else: ?>
+                                <span class="material-symbols-outlined"><?php echo e($social['icon']); ?></span>
+                            <?php endif; ?>
                         </a>
                     <?php endforeach; ?>
                 </div>

@@ -95,6 +95,8 @@
         var followMenu = document.querySelector('[data-follow-menu]');
         var followToggle = followMenu ? followMenu.querySelector('.follow-toggle') : null;
         var closeButtons = panel ? panel.querySelectorAll('[data-menu-close]') : [];
+        var sheet = panel ? panel.querySelector('.mobile-menu-sheet') : null;
+        var brandMark = header ? header.querySelector('.brand-mark') : null;
         var primaryClose = panel ? panel.querySelector('.mobile-close') : null;
         var firstLink = panel ? panel.querySelector('.mobile-nav-link') : null;
         var lastFocusedElement = null;
@@ -107,6 +109,46 @@
         panel.setAttribute('aria-hidden', 'true');
         var hideTimer = null;
 
+        var updateMenuAnchor = function () {
+            if (!panel || !sheet) {
+                return;
+            }
+
+            var viewportWidth = window.innerWidth || 360;
+            var viewportHeight = window.innerHeight || 640;
+            var left = 10;
+            var top = 84;
+            var width = Math.min(390, viewportWidth - 20);
+
+            if (toggle) {
+                var toggleRect = toggle.getBoundingClientRect();
+                top = Math.round(toggleRect.bottom + 10);
+                width = Math.min(390, Math.max(260, Math.round(viewportWidth * 0.9)));
+                left = Math.round(toggleRect.right - width);
+            }
+
+            if (!toggle && brandMark) {
+                var rect = brandMark.getBoundingClientRect();
+                left = Math.round(rect.left);
+                top = Math.round(rect.bottom + 10);
+            }
+
+            left = Math.max(8, left);
+            width = Math.min(width, viewportWidth - left - 8);
+            width = Math.max(260, width);
+
+            if (left + width > viewportWidth - 8) {
+                left = Math.max(8, viewportWidth - width - 8);
+            }
+
+            var maxHeight = Math.max(220, viewportHeight - top - 8);
+
+            panel.style.setProperty('--mobile-menu-top', top + 'px');
+            panel.style.setProperty('--mobile-menu-left', left + 'px');
+            panel.style.setProperty('--mobile-menu-width', width + 'px');
+            panel.style.setProperty('--mobile-menu-max-height', maxHeight + 'px');
+        };
+
         var openMenu = function () {
             if (hideTimer) {
                 window.clearTimeout(hideTimer);
@@ -114,6 +156,7 @@
             }
 
             lastFocusedElement = document.activeElement;
+            updateMenuAnchor();
             panel.removeAttribute('hidden');
             window.requestAnimationFrame(function () {
                 panel.classList.add('is-open');
@@ -169,8 +212,8 @@
         }
 
         window.addEventListener('resize', function () {
-            if (window.innerWidth >= 992 && panel.classList.contains('is-open')) {
-                closeMenu();
+            if (panel.classList.contains('is-open')) {
+                updateMenuAnchor();
             }
         });
 
