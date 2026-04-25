@@ -180,7 +180,7 @@ $services = services_list(true);
                 <?php $showFocusX = (int) (isset($show['cover_focus_x']) ? $show['cover_focus_x'] : 50); ?>
                 <?php $showFocusY = (int) (isset($show['cover_focus_y']) ? $show['cover_focus_y'] : 50); ?>
                 <div class="col-md-6 col-lg-4 reveal reveal-delay-<?php echo e(($index % 3) + 1); ?>">
-                    <article class="section-card show-card floating-card">
+                    <article class="section-card show-card floating-card position-relative">
                         <div class="show-cover" style="background-image:url('<?php echo e(media_url($show['cover_image'])); ?>');background-position:<?php echo e($showFocusX); ?>% <?php echo e($showFocusY); ?>%;"></div>
                         <h5 class="mt-3"><?php echo e($show['title']); ?></h5>
                         <p class="show-time mb-1"><?php echo e($show['day_of_week']); ?> | <?php echo e(substr($show['start_time'], 0, 5)); ?>-<?php echo e(substr($show['end_time'], 0, 5)); ?></p>
@@ -191,11 +191,8 @@ $services = services_list(true);
                                 <?php endforeach; ?>
                             </div>
                         <?php endif; ?>
-                        <p class="text-muted mb-3"><?php echo e($show['description']); ?></p>
-                        <div class="d-flex gap-2 mt-auto">
-                            <a class="btn btn-sm btn-live" href="<?php echo e(url('listen-live')); ?>" data-pjax>Listen Clips</a>
-                            <a class="btn btn-sm btn-outline-primary" href="<?php echo e(url('shows/' . $show['slug'])); ?>" data-pjax>View Details</a>
-                        </div>
+                        <p class="text-muted mb-0"><?php echo e($show['description']); ?></p>
+                        <a href="<?php echo e(url('shows/' . $show['slug'])); ?>" data-pjax class="stretched-link" aria-label="View details for <?php echo e($show['title']); ?>"></a>
                     </article>
                 </div>
             <?php endforeach; ?>

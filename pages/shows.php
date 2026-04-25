@@ -24,7 +24,7 @@ $shows = programs_list(true);
                 <?php $focusX = (int) (isset($show['cover_focus_x']) ? $show['cover_focus_x'] : 50); ?>
                 <?php $focusY = (int) (isset($show['cover_focus_y']) ? $show['cover_focus_y'] : 50); ?>
                 <div class="col-md-6 col-lg-4 reveal reveal-delay-<?php echo e(($index % 3) + 1); ?>">
-                    <article class="section-card show-card floating-card">
+                    <article class="section-card show-card floating-card position-relative">
                         <div class="show-cover" style="background-image:url('<?php echo e(media_url($show['cover_image'])); ?>');background-position:<?php echo e($focusX); ?>% <?php echo e($focusY); ?>%;"></div>
                         <h5 class="mt-3 mb-1"><?php echo e($show['title']); ?></h5>
                         <p class="show-time mb-2"><?php echo e($show['day_of_week']); ?> | <?php echo e(substr($show['start_time'], 0, 5)); ?>-<?php echo e(substr($show['end_time'], 0, 5)); ?></p>
@@ -37,10 +37,9 @@ $shows = programs_list(true);
                         <?php endif; ?>
                         <p class="text-muted mb-3"><?php echo e($show['description']); ?></p>
                         <div class="d-flex flex-wrap gap-2">
-                            <a href="<?php echo e(url('listen-live')); ?>" data-pjax class="btn btn-sm btn-live">Listen Clips</a>
-                            <a href="<?php echo e(url('shows/' . $show['slug'])); ?>" data-pjax class="btn btn-sm btn-outline-primary">View Details</a>
-                            <a href="<?php echo e(url('advertise-partner')); ?>" data-pjax class="btn btn-sm btn-outline-secondary">Sponsor This Show</a>
+                            <a href="<?php echo e(url('advertise-partner')); ?>" data-pjax class="btn btn-sm btn-outline-secondary position-relative" style="z-index:2;">Sponsor This Show</a>
                         </div>
+                        <a href="<?php echo e(url('shows/' . $show['slug'])); ?>" data-pjax class="stretched-link" aria-label="View details for <?php echo e($show['title']); ?>"></a>
                     </article>
                 </div>
             <?php endforeach; ?>

@@ -133,12 +133,13 @@ body {
     border: 0;
     border-radius: 999px;
     color: #fff;
-    background: linear-gradient(135deg, var(--orange), var(--accent-blue));
+    background: var(--orange);
     box-shadow: 0 10px 22px rgba(37,99,235,.2);
 }
 
 .btn-warning:hover {
     color: #fff;
+    background: #df6f00;
 }
 
 .btn-outline-primary,
