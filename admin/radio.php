@@ -60,8 +60,8 @@ $okMsg = flash('success');
 
         <div class="mb-3">
             <label class="form-label">Embed Script URL (optional)</label>
-            <input class="form-control" name="radio_embed_script" value="<?php echo e(setting('radio_embed_script', '//myradiostream.com/embed/mayugefmuganda')); ?>">
-            <small class="text-muted">Use only the script src value, for example: //myradiostream.com/embed/mayugefmuganda</small>
+            <input class="form-control" name="radio_embed_script" value="<?php echo e(setting('radio_embed_script', '//example.com/embed/radioname')); ?>">
+            <small class="text-muted">Use only the script src value, for example: example.com/embed/radioname</small>
         </div>
 
         <div class="form-check mb-3">

@@ -15,10 +15,12 @@
     var source = audio.querySelector('source');
     var embedScript = audio.getAttribute('data-embed-script') || '';
     var baseUrl = audio.getAttribute('data-base-url') || window.location.origin;
+    var defaultNowPlaying = audio.getAttribute('data-now-playing') || 'EKO FM Live';
 
     var candidates = [];
     var candidateIndex = 0;
     var resolving = false;
+    var nowPlayingTimer = null;
 
     function readState() {
         try {
@@ -102,6 +104,19 @@
         }
     }
 
+    function refreshNowPlaying() {
+        var endpoint = baseUrl + '/handlers/now_playing.php?_=' + Date.now();
+        fetch(endpoint)
+            .then(function (res) { return res.json(); })
+            .then(function (json) {
+                if (!json || !json.ok || !json.title) {
+                    return;
+                }
+                setNowPlaying(json.title);
+            })
+            .catch(function () {});
+    }
+
     function resolveFromEmbed(done) {
         if (!embedScript || resolving) {
             done();
@@ -118,7 +133,7 @@
                     candidates = [];
                     candidateIndex = 0;
                     buildCandidates(json.url);
-                    setNowPlaying('Now Playing: Live Stream');
+                    setNowPlaying(defaultNowPlaying);
                 }
             })
             .catch(function () {})
@@ -195,6 +210,7 @@
         }
 
         var baseBottom = parseFloat(window.getComputedStyle(shell).bottom || '20') || 20;
+        var dockGap = 8;
 
         var ticking = false;
         var update = function () {
@@ -202,7 +218,8 @@
             var visibleFooter = Math.max(0, window.innerHeight - rect.top);
 
             if (visibleFooter > 0) {
-                shell.style.bottom = (baseBottom + visibleFooter + 8) + 'px';
+                var dockedBottom = Math.max(baseBottom, visibleFooter + dockGap);
+                shell.style.bottom = dockedBottom + 'px';
             } else {
                 shell.style.removeProperty('bottom');
             }
@@ -284,8 +301,17 @@
     document.addEventListener('pjax:loaded', function () {
         heroNowPlaying = document.getElementById('hero-now-playing');
         initFooterDocking();
+        if (heroNowPlaying && streamLabel && streamLabel.textContent) {
+            heroNowPlaying.textContent = streamLabel.textContent;
+        }
     });
     bindHeroButton();
+    setNowPlaying(defaultNowPlaying);
+    refreshNowPlaying();
+    if (nowPlayingTimer) {
+        window.clearInterval(nowPlayingTimer);
+    }
+    nowPlayingTimer = window.setInterval(refreshNowPlaying, 60000);
     updateIcon();
     initFooterDocking();
 })();

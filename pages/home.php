@@ -161,7 +161,10 @@ $services = services_list(true);
                         <h4 class="mb-2">Work With Us</h4>
                         <p class="mb-3 text-muted">Reach thousands across Karamoja through radio, digital, and on-ground activation.</p>
                     </div>
-                    <a href="<?php echo e(url('advertise-partner')); ?>" data-pjax class="btn btn-live align-self-start">Advertise With EKO FM</a>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="<?php echo e(url('advertise-partner')); ?>" data-pjax class="btn btn-live align-self-start">Advertise With EKO FM</a>
+                        <a href="mailto:partnerships@ekoradio.fm?subject=<?php echo rawurlencode('Sponsorship Media Kit Request'); ?>" class="btn btn-glass align-self-start">Download Sponsorship Kit</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -181,6 +184,13 @@ $services = services_list(true);
                         <div class="show-cover" style="background-image:url('<?php echo e(media_url($show['cover_image'])); ?>');background-position:<?php echo e($showFocusX); ?>% <?php echo e($showFocusY); ?>%;"></div>
                         <h5 class="mt-3"><?php echo e($show['title']); ?></h5>
                         <p class="show-time mb-1"><?php echo e($show['day_of_week']); ?> | <?php echo e(substr($show['start_time'], 0, 5)); ?>-<?php echo e(substr($show['end_time'], 0, 5)); ?></p>
+                        <?php if (!empty($show['tones'])): ?>
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                                <?php foreach ($show['tones'] as $tone): ?>
+                                    <span class="tone-badge"><?php echo e($tone); ?></span>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
                         <p class="text-muted mb-3"><?php echo e($show['description']); ?></p>
                         <div class="d-flex gap-2 mt-auto">
                             <a class="btn btn-sm btn-live" href="<?php echo e(url('listen-live')); ?>" data-pjax>Listen Clips</a>

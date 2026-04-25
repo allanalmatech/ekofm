@@ -23,5 +23,9 @@ $metaTitle = 'About EKO FM';
         <h3 class="mb-3">Our Promise</h3>
         <p>At EKO FM, we believe radio is more than sound - it is a tool for change, a voice for the people, and a bridge that connects communities.</p>
         <p class="mb-0 fw-semibold">EKO FM - On-Air. Online. On-Ground. For Peace & Development.</p>
+        <div class="d-flex flex-wrap gap-2 mt-3">
+            <a class="btn btn-live" href="<?php echo e(url('our-team')); ?>" data-pjax>Meet Our Team</a>
+            <a class="btn btn-outline-primary" href="<?php echo e(url('activations')); ?>" data-pjax>Live & Community Activations</a>
+        </div>
     </section>
 </main>

@@ -7,6 +7,7 @@ $navLinks = array(
     'dramas' => 'Dramas',
     'news' => 'News',
     'about' => 'About',
+    'activations' => 'Activations',
     'advertise-partner' => 'Advertise',
     'contact' => 'Contact'
 );
@@ -17,6 +18,7 @@ $mobileLinks = array(
     array('route' => 'dramas', 'url' => url('dramas'), 'label' => 'Dramas', 'icon' => 'theater_comedy'),
     array('route' => 'news', 'url' => url('news'), 'label' => 'News', 'icon' => 'newspaper'),
     array('route' => 'about', 'url' => url('about'), 'label' => 'About', 'icon' => 'info'),
+    array('route' => 'activations', 'url' => url('activations'), 'label' => 'Activations', 'icon' => 'groups_3'),
     array('route' => 'advertise-partner', 'url' => url('advertise-partner'), 'label' => 'Advertise', 'icon' => 'campaign'),
     array('route' => 'contact', 'url' => url('contact'), 'label' => 'Contact', 'icon' => 'call')
 );

@@ -18,3 +18,12 @@ function get_homepage_sections()
     $stmt = db_query('SELECT * FROM homepage_sections WHERE status = 1 ORDER BY sort_order ASC, id ASC');
     return $stmt->fetchAll();
 }
+
+function get_page_sections_by_slug($slug)
+{
+    $page = get_page_by_slug($slug);
+    if (!$page) {
+        return array();
+    }
+    return get_page_sections((int) $page['id']);
+}

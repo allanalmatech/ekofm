@@ -28,6 +28,13 @@ $shows = programs_list(true);
                         <div class="show-cover" style="background-image:url('<?php echo e(media_url($show['cover_image'])); ?>');background-position:<?php echo e($focusX); ?>% <?php echo e($focusY); ?>%;"></div>
                         <h5 class="mt-3 mb-1"><?php echo e($show['title']); ?></h5>
                         <p class="show-time mb-2"><?php echo e($show['day_of_week']); ?> | <?php echo e(substr($show['start_time'], 0, 5)); ?>-<?php echo e(substr($show['end_time'], 0, 5)); ?></p>
+                        <?php if (!empty($show['tones'])): ?>
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                                <?php foreach ($show['tones'] as $tone): ?>
+                                    <span class="tone-badge"><?php echo e($tone); ?></span>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
                         <p class="text-muted mb-3"><?php echo e($show['description']); ?></p>
                         <div class="d-flex flex-wrap gap-2">
                             <a href="<?php echo e(url('listen-live')); ?>" data-pjax class="btn btn-sm btn-live">Listen Clips</a>

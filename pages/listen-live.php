@@ -1,5 +1,11 @@
 <?php
 $metaTitle = 'Listen Live - EKO FM';
+
+$fallbackTitle = trim((string) preg_replace('/^now\s*playing\s*:\s*/i', '', setting('radio_stream_title', 'EKO FM Live')));
+$currentShow = function_exists('current_program_on_air') ? current_program_on_air() : null;
+$nowPlayingName = $currentShow
+    ? $currentShow['title']
+    : ($fallbackTitle !== '' ? $fallbackTitle : 'EKO FM Live');
 ?>
 <main class="container-xxl py-4">
     <section class="live-page section-card floating-card reveal story-section" data-parallax="0.14">
@@ -17,6 +23,6 @@ $metaTitle = 'Listen Live - EKO FM';
             <a class="btn btn-outline-primary btn-lg" href="<?php echo e(url('shows')); ?>" data-pjax>Browse Shows</a>
         </div>
 
-        <p class="mb-0">Now Playing: <strong id="hero-now-playing"><?php echo e(setting('radio_stream_title', 'EKO FM Live')); ?></strong></p>
+        <p class="mb-0">Now Playing: <strong id="hero-now-playing"><?php echo e($nowPlayingName); ?></strong></p>
     </section>
 </main>

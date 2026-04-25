@@ -9,6 +9,7 @@ $menu = array(
     'services' => array('Services', 'services.php', 'widgets', 'services.manage'),
     'rate-card' => array('Rate Card', 'ratecard.php', 'payments', 'ratecard.manage'),
     'pages' => array('Pages/Sections', 'pages.php', 'web', 'pages.manage'),
+    'page-sections' => array('Page Section Blocks', 'page_sections.php', 'view_agenda', 'pages.manage'),
     'hero-slides' => array('Hero Slider', 'hero_slides.php', 'slideshow', 'settings.manage'),
     'radio' => array('Radio Settings', 'radio.php', 'tune', 'radio.manage'),
     'settings' => array('Site Settings', 'settings.php', 'settings', 'settings.manage'),

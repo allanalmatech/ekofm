@@ -24,6 +24,7 @@ $items = programs_list(true);
                         <th>Day</th>
                         <th>Time</th>
                         <th>Presenter</th>
+                        <th>Tones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,6 +34,17 @@ $items = programs_list(true);
                         <td><?php echo e($row['day_of_week']); ?></td>
                         <td><span class="show-time"><?php echo e(substr($row['start_time'], 0, 5)); ?> - <?php echo e(substr($row['end_time'], 0, 5)); ?></span></td>
                         <td><?php echo e($row['presenter']); ?></td>
+                        <td>
+                            <?php if (!empty($row['tones'])): ?>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <?php foreach ($row['tones'] as $tone): ?>
+                                        <span class="tone-badge"><?php echo e($tone); ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php else: ?>
+                                <span class="text-muted">-</span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>

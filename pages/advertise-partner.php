@@ -13,6 +13,8 @@ $metaTitle = 'Advertise / Partner - EKO FM';
         <p>We work with NGOs, Health Organizations, Businesses, and Government Agencies.</p>
         <div class="d-flex flex-wrap gap-2">
             <a class="btn btn-live glow-button" href="<?php echo e(url('rate-card')); ?>" data-pjax>Request Rate Card</a>
+            <a class="btn btn-glass" href="mailto:partnerships@ekoradio.fm?subject=<?php echo rawurlencode('Sponsorship Media Kit Request'); ?>">Download Sponsorship Kit</a>
+            <a class="btn btn-outline-primary" href="<?php echo e(url('activations')); ?>" data-pjax>View Activations</a>
             <a class="btn btn-outline-primary" href="<?php echo e(url('contact')); ?>" data-pjax>Contact Our Sales Team</a>
         </div>
     </section>

@@ -380,7 +380,15 @@
             for (var i = 0; i < targets.length; i++) {
                 var speed = parseFloat(targets[i].getAttribute('data-parallax') || '0.16');
                 var shift = Math.min(scrolled * speed, 52);
-                targets[i].style.backgroundPosition = 'center calc(50% + ' + shift + 'px)';
+                var focusX = parseFloat(targets[i].getAttribute('data-focus-x') || '50');
+                var focusY = parseFloat(targets[i].getAttribute('data-focus-y') || '50');
+                if (!isFinite(focusX)) {
+                    focusX = 50;
+                }
+                if (!isFinite(focusY)) {
+                    focusY = 50;
+                }
+                targets[i].style.backgroundPosition = focusX + '% calc(' + focusY + '% + ' + shift + 'px)';
             }
             ticking = false;
         };
