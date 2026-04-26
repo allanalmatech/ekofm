@@ -145,7 +145,7 @@
 
     function startPlayback() {
         audio.play().catch(function () {
-            setNowPlaying('Unable to start stream');
+            setNowPlaying('Stream offline. Contact support team.');
         });
     }
 
@@ -294,7 +294,7 @@
             return;
         }
 
-        setNowPlaying('Live stream unavailable. Check stream URL or embed settings.');
+        setNowPlaying('Stream offline. Contact support team.');
     });
 
     document.addEventListener('pjax:loaded', bindHeroButton);
