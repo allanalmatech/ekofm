@@ -40,6 +40,75 @@
         <span class="material-symbols-outlined">chat</span>
     </a>
 
+    <div class="modal fade" id="sponsorProgramModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sponsor This Program</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small mb-2">Send your sponsorship request directly on WhatsApp.</p>
+                    <div class="mb-2">
+                        <label class="form-label">Program</label>
+                        <input type="text" class="form-control" id="sponsorProgramName" readonly>
+                    </div>
+                    <div>
+                        <label class="form-label">Message</label>
+                        <textarea class="form-control" id="sponsorProgramMessage" rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="#" class="btn btn-warning" id="sendSponsorWhatsApp" target="_blank" rel="noopener">Send on WhatsApp</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        var whatsappBase = <?php echo json_encode(whatsapp_link(setting('contact_whatsapp', '0791996450'))); ?>;
+        var programInput = document.getElementById('sponsorProgramName');
+        var messageInput = document.getElementById('sponsorProgramMessage');
+        var sendBtn = document.getElementById('sendSponsorWhatsApp');
+        var currentProgram = '';
+
+        function buildMessage(programName) {
+            return 'Hello EKO FM, I am interested in sponsoring the program "' + programName + '". Please share sponsorship options and rates.';
+        }
+
+        function updateSendLink() {
+            if (!sendBtn) {
+                return;
+            }
+            var text = messageInput && messageInput.value ? messageInput.value : buildMessage(currentProgram || '');
+            var separator = whatsappBase.indexOf('?') === -1 ? '?' : '&';
+            sendBtn.href = whatsappBase + separator + 'text=' + encodeURIComponent(text);
+        }
+
+        document.addEventListener('click', function (e) {
+            var button = e.target.closest('.sponsor-program-btn');
+            if (!button) {
+                return;
+            }
+
+            currentProgram = button.getAttribute('data-show-title') || '';
+            if (programInput) {
+                programInput.value = currentProgram;
+            }
+            if (messageInput) {
+                messageInput.value = buildMessage(currentProgram);
+            }
+            updateSendLink();
+        });
+
+        if (messageInput) {
+            messageInput.addEventListener('input', updateSendLink);
+        }
+    })();
+    </script>
+
     <?php if (setting('radio_player_enabled', '1') === '1'): ?>
         <?php include __DIR__ . '/player.php'; ?>
     <?php endif; ?>

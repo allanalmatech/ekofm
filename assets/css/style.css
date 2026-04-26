@@ -1281,12 +1281,29 @@ body[data-home="0"] .site-header .header-menu-content {
 }
 
 .chip {
+    border: 0;
     background: #fff2e3;
     color: #9c4a00;
     padding: .36rem .78rem;
     border-radius: 999px;
     font-size: .82rem;
     font-weight: 600;
+    line-height: 1;
+}
+
+button.chip {
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+button.chip:hover {
+    transform: translateY(-1px);
+}
+
+button.chip.is-active {
+    background: #f57c00;
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(245, 124, 0, .3);
 }
 
 .tone-badge {

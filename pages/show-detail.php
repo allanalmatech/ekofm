@@ -179,7 +179,8 @@ $language = ($show['slug'] === 'etem-a-karamoja') ? 'Ngakarimojong + English' : 
 
         <div class="d-flex flex-wrap gap-2 mt-4">
             <a class="btn show-detail-btn-primary" href="<?php echo e(url('listen-live')); ?>" data-pjax><span class="material-symbols-outlined">play_arrow</span> Listen Live</a>
-            <a class="btn show-detail-btn-secondary" href="<?php echo e(url('advertise-partner')); ?>" data-pjax>Sponsor This Show</a>
+            <button type="button" class="btn show-detail-btn-secondary sponsor-program-btn" data-show-title="<?php echo e($show['title']); ?>" data-bs-toggle="modal" data-bs-target="#sponsorProgramModal">Sponsor This Show</button>
         </div>
     </section>
+
 </main>

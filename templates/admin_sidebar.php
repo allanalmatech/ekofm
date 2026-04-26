@@ -19,7 +19,20 @@ $menu = array(
 );
 ?>
 <aside class="admin-sidebar">
-    <div class="admin-brand mb-3">Eko FM</div>
+    <div class="admin-brand mb-3">
+        <div class="admin-brand-logo-wrap">
+            <?php $adminLogo = setting('site_logo', ''); ?>
+            <?php if ($adminLogo !== ''): ?>
+                <img src="<?php echo e(media_url($adminLogo)); ?>" alt="Eko FM Logo" class="admin-brand-logo">
+            <?php else: ?>
+                <span class="material-symbols-outlined admin-brand-logo-fallback">radio</span>
+            <?php endif; ?>
+        </div>
+        <div class="admin-brand-text">
+            <strong>Admin Panel</strong>
+            <small>Eko FM</small>
+        </div>
+    </div>
     <nav class="nav flex-column">
         <?php foreach ($menu as $key => $item): ?>
             <?php if ($key === 'dashboard' || has_permission($item[3])): ?>

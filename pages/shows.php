@@ -38,7 +38,7 @@ $shows = programs_list(true);
                         <?php endif; ?>
                         <p class="text-muted mb-3"><?php echo e($briefDescription); ?></p>
                         <div class="d-flex flex-wrap gap-2">
-                            <a href="<?php echo e(url('advertise-partner')); ?>" data-pjax class="btn btn-sm btn-outline-secondary position-relative" style="z-index:2;">Sponsor This Show</a>
+                            <button type="button" class="btn btn-sm btn-outline-secondary position-relative sponsor-program-btn" style="z-index:2;" data-show-title="<?php echo e($show['title']); ?>" data-bs-toggle="modal" data-bs-target="#sponsorProgramModal">Sponsor This Show</button>
                         </div>
                         <a href="<?php echo e(url('shows/' . $show['slug'])); ?>" data-pjax class="stretched-link" aria-label="View details for <?php echo e($show['title']); ?>"></a>
                     </article>
@@ -46,4 +46,5 @@ $shows = programs_list(true);
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
+
 </main>
