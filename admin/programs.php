@@ -31,6 +31,16 @@ if (!$hasWhatToExpect) {
     db_query("ALTER TABLE programs ADD COLUMN what_to_expect MEDIUMTEXT NULL AFTER full_description");
 }
 
+$hasTonesTable = db_query("SHOW TABLES LIKE 'tones'")->fetch();
+if (!$hasTonesTable) {
+    db_query('CREATE TABLE tones (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(120) NOT NULL UNIQUE) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci');
+}
+
+$hasProgramTonesTable = db_query("SHOW TABLES LIKE 'program_tones'")->fetch();
+if (!$hasProgramTonesTable) {
+    db_query('CREATE TABLE program_tones (id INT AUTO_INCREMENT PRIMARY KEY, program_id INT, tone_id INT, UNIQUE KEY uniq_program_tone (program_id, tone_id), KEY idx_program_tones_program (program_id), KEY idx_program_tones_tone (tone_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci');
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verify_csrf($_POST['_token'])) {
         redirect('admin/programs.php');
@@ -47,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $briefDescription = isset($_POST['brief_description']) ? trim($_POST['brief_description']) : '';
     $fullDescription = isset($_POST['full_description']) ? trim($_POST['full_description']) : '';
     $whatToExpect = isset($_POST['what_to_expect']) ? trim($_POST['what_to_expect']) : '';
+    $tonesRaw = isset($_POST['tones']) ? trim($_POST['tones']) : '';
 
     if ($briefDescription === '' && isset($_POST['description'])) {
         $briefDescription = trim($_POST['description']);
@@ -68,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    $programId = $id;
     if ($id > 0) {
         db_query(
             'UPDATE programs SET title=?, slug=?, presenter=?, cover_image=?, cover_focus_x=?, cover_focus_y=?, day_of_week=?, start_time=?, end_time=?, description=?, brief_description=?, full_description=?, what_to_expect=?, status=?, updated_at=NOW() WHERE id=?',
@@ -78,6 +90,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'INSERT INTO programs (title, slug, presenter, cover_image, cover_focus_x, cover_focus_y, day_of_week, start_time, end_time, description, brief_description, full_description, what_to_expect, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())',
             array($title, $slug, $presenter, $coverImage, $coverFocusX, $coverFocusY, $dayOfWeek, $startTime, $endTime, $description, $briefDescription, $fullDescription, $whatToExpect, $status)
         );
+        $programId = (int) db()->lastInsertId();
+    }
+
+    if ($programId > 0) {
+        $toneNames = array();
+        if ($tonesRaw !== '') {
+            $parts = explode(',', $tonesRaw);
+            foreach ($parts as $part) {
+                $name = trim($part);
+                if ($name === '') {
+                    continue;
+                }
+                $toneNames[$name] = $name;
+            }
+        }
+
+        db_query('DELETE FROM program_tones WHERE program_id=?', array($programId));
+
+        foreach (array_values($toneNames) as $toneName) {
+            db_query('INSERT INTO tones (name) VALUES (?) ON DUPLICATE KEY UPDATE name=VALUES(name)', array($toneName));
+            $toneRow = db_query('SELECT id FROM tones WHERE name=? LIMIT 1', array($toneName))->fetch();
+            if (!$toneRow) {
+                continue;
+            }
+            db_query('INSERT INTO program_tones (program_id, tone_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE tone_id=VALUES(tone_id)', array($programId, (int) $toneRow['id']));
+        }
     }
 
     redirect('admin/programs.php');
@@ -90,6 +128,24 @@ if (isset($_GET['delete'])) {
 
 $edit = isset($_GET['edit']) ? db_query('SELECT * FROM programs WHERE id=?', array((int) $_GET['edit']))->fetch() : null;
 $rows = db_query('SELECT * FROM programs ORDER BY day_of_week ASC, start_time ASC, id DESC')->fetchAll();
+
+$programToneMap = array();
+if ($rows) {
+    $toneRows = db_query('SELECT pt.program_id, t.name FROM program_tones pt INNER JOIN tones t ON t.id = pt.tone_id ORDER BY t.name ASC')->fetchAll();
+    foreach ($toneRows as $tr) {
+        $pid = (int) $tr['program_id'];
+        if (!isset($programToneMap[$pid])) {
+            $programToneMap[$pid] = array();
+        }
+        $programToneMap[$pid][] = $tr['name'];
+    }
+}
+
+$toneSuggestions = db_query('SELECT name FROM tones ORDER BY name ASC')->fetchAll();
+$toneSuggestionNames = array();
+foreach ($toneSuggestions as $ts) {
+    $toneSuggestionNames[] = $ts['name'];
+}
 
 include __DIR__ . '/../templates/admin_header.php';
 ?>
@@ -138,6 +194,7 @@ include __DIR__ . '/../templates/admin_header.php';
                         <td><?php echo e($r['presenter']); ?></td>
                         <td><?php echo (int) $r['status'] === 1 ? 'Active' : 'Inactive'; ?></td>
                         <td class="text-end">
+                            <?php $rowTones = isset($programToneMap[(int) $r['id']]) ? $programToneMap[(int) $r['id']] : array(); ?>
                             <button
                                 type="button"
                                 class="btn btn-sm btn-outline-primary edit-program-btn"
@@ -153,6 +210,7 @@ include __DIR__ . '/../templates/admin_header.php';
                                 data-brief-description="<?php echo e(isset($r['brief_description']) ? $r['brief_description'] : $r['description']); ?>"
                                 data-full-description="<?php echo e(isset($r['full_description']) ? $r['full_description'] : $r['description']); ?>"
                                 data-what-to-expect="<?php echo e(isset($r['what_to_expect']) ? $r['what_to_expect'] : ''); ?>"
+                                data-tones="<?php echo e(implode(', ', $rowTones)); ?>"
                                 data-description="<?php echo e($r['description']); ?>"
                                 data-status="<?php echo e((int) $r['status']); ?>"
                                 data-image="<?php echo e($r['cover_image']); ?>"
@@ -237,6 +295,16 @@ include __DIR__ . '/../templates/admin_header.php';
                             <textarea class="form-control" rows="4" name="what_to_expect" id="programWhatToExpect" placeholder="Bullet points or short paragraph."></textarea>
                             <small class="text-muted d-block mt-1">If empty, this section is hidden on the show details page.</small>
                         </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Tones</label>
+                            <input class="form-control" name="tones" id="programTones" list="toneSuggestions" placeholder="Type tone, then comma for next">
+                            <datalist id="toneSuggestions">
+                                <?php foreach ($toneSuggestionNames as $toneName): ?>
+                                    <option value="<?php echo e($toneName); ?>"></option>
+                                <?php endforeach; ?>
+                            </datalist>
+                            <small class="text-muted d-block mt-1">Separate tones with commas. Example: Energetic, Smart, Interactive</small>
+                        </div>
 
                         <div class="col-12 mt-2">
                             <h6 class="mb-1">Publishing & Media</h6>
@@ -289,6 +357,7 @@ include __DIR__ . '/../templates/admin_header.php';
     var briefDescriptionInput = document.getElementById('programBriefDescription');
     var fullDescriptionInput = document.getElementById('programFullDescription');
     var whatToExpectInput = document.getElementById('programWhatToExpect');
+    var tonesInput = document.getElementById('programTones');
     var statusInput = document.getElementById('programStatus');
     var imageHint = document.getElementById('programImageHint');
     var imageInput = document.getElementById('programImageInput');
@@ -324,6 +393,7 @@ include __DIR__ . '/../templates/admin_header.php';
         briefDescriptionInput.value = data.briefDescription || data.description || '';
         fullDescriptionInput.value = data.fullDescription || data.briefDescription || data.description || '';
         whatToExpectInput.value = data.whatToExpect || '';
+        tonesInput.value = data.tones || '';
         statusInput.value = String(data.status || 1);
         imageHint.textContent = data.image ? ('Current image: ' + data.image) : 'Upload image (jpg, jpeg, png, webp).';
         setPreviewImage(data.image ? data.imageUrl : '');
@@ -349,6 +419,7 @@ include __DIR__ . '/../templates/admin_header.php';
                 briefDescription: this.getAttribute('data-brief-description') || '',
                 fullDescription: this.getAttribute('data-full-description') || '',
                 whatToExpect: this.getAttribute('data-what-to-expect') || '',
+                tones: this.getAttribute('data-tones') || '',
                 description: this.getAttribute('data-description') || '',
                 status: parseInt(this.getAttribute('data-status') || '1', 10),
                 image: this.getAttribute('data-image') || '',

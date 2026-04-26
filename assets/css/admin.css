@@ -200,6 +200,101 @@ body {
     background: radial-gradient(circle, rgba(37,99,235,.18), rgba(37,99,235,0));
 }
 
+.media-dropzone {
+    border: 1px dashed rgba(37, 99, 235, .35);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .65);
+    padding: 1.1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+}
+
+.media-dropzone:hover,
+.media-dropzone.is-dragover {
+    border-color: rgba(37, 99, 235, .68);
+    background: rgba(235, 244, 255, .72);
+    transform: translateY(-1px);
+}
+
+.media-dropzone .material-symbols-outlined {
+    font-size: 1.7rem;
+    color: var(--accent-blue);
+    margin-bottom: .2rem;
+}
+
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: .7rem;
+}
+
+.media-item {
+    border: 1px solid rgba(37, 99, 235, .14);
+    border-radius: 12px;
+    padding: .45rem;
+    background: rgba(255, 255, 255, .86);
+    cursor: pointer;
+    transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.media-item:hover {
+    border-color: rgba(37, 99, 235, .4);
+    box-shadow: 0 12px 20px rgba(15, 23, 42, .08);
+    transform: translateY(-1px);
+}
+
+.media-item.is-selected {
+    border-color: rgba(245, 124, 0, .62);
+    box-shadow: 0 14px 24px rgba(245, 124, 0, .16);
+}
+
+.media-select {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: .25rem;
+}
+
+.media-thumb {
+    height: 118px;
+    border-radius: 10px;
+    background: linear-gradient(145deg, rgba(37, 99, 235, .16), rgba(15, 23, 42, .08));
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #334155;
+}
+
+.media-meta {
+    margin-top: .45rem;
+    line-height: 1.25;
+}
+
+.media-meta strong,
+.media-meta small {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.media-sidebar-preview {
+    border: 1px solid rgba(37, 99, 235, .16);
+    border-radius: 12px;
+    padding: .55rem;
+    background: rgba(255, 255, 255, .78);
+}
+
+.media-sidebar-preview-image {
+    height: 140px;
+    border-radius: 8px;
+    background: linear-gradient(145deg, rgba(37, 99, 235, .14), rgba(15, 23, 42, .08));
+    background-size: cover;
+    background-position: center;
+}
+
 .quick-link {
     display: flex;
     justify-content: space-between;
