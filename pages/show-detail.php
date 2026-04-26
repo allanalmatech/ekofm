@@ -9,6 +9,8 @@ if (!$show) {
 $metaTitle = $show['title'] . ' - EKO FM Shows';
 $focusX = (int) (isset($show['cover_focus_x']) ? $show['cover_focus_x'] : 50);
 $focusY = (int) (isset($show['cover_focus_y']) ? $show['cover_focus_y'] : 50);
+$fullDescription = trim((string) (isset($show['full_description']) && $show['full_description'] !== '' ? $show['full_description'] : $show['description']));
+$whatToExpect = trim((string) (isset($show['what_to_expect']) ? $show['what_to_expect'] : ''));
 
 function day_index_by_name($name)
 {
@@ -149,10 +151,15 @@ $language = ($show['slug'] === 'etem-a-karamoja') ? 'Ngakarimojong + English' : 
                             <span class="tone-badge tone-<?php echo e(tone_class_name($tone)); ?>"><?php echo e($tone); ?></span>
                         <?php endforeach; ?>
                     </div>
-                <?php else: ?>
-                    <p class="text-muted small mb-3">No tone is assigned for this show in the current editorial document.</p>
                 <?php endif; ?>
-                <p class="text-muted"><?php echo e($show['description']); ?></p>
+                <p class="text-muted"><?php echo e($fullDescription); ?></p>
+
+                <?php if ($whatToExpect !== ''): ?>
+                    <div class="mt-4">
+                        <h5 class="mb-2">What to Expect</h5>
+                        <p class="text-muted mb-0"><?php echo nl2br(e($whatToExpect)); ?></p>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <aside class="show-meta-card">

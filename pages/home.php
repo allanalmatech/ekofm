@@ -179,6 +179,7 @@ $services = services_list(true);
             <?php foreach ($shows as $index => $show): ?>
                 <?php $showFocusX = (int) (isset($show['cover_focus_x']) ? $show['cover_focus_x'] : 50); ?>
                 <?php $showFocusY = (int) (isset($show['cover_focus_y']) ? $show['cover_focus_y'] : 50); ?>
+                <?php $briefDescription = trim((string) (isset($show['brief_description']) && $show['brief_description'] !== '' ? $show['brief_description'] : $show['description'])); ?>
                 <div class="col-md-6 col-lg-4 reveal reveal-delay-<?php echo e(($index % 3) + 1); ?>">
                     <article class="section-card show-card floating-card position-relative">
                         <div class="show-cover" style="background-image:url('<?php echo e(media_url($show['cover_image'])); ?>');background-position:<?php echo e($showFocusX); ?>% <?php echo e($showFocusY); ?>%;"></div>
@@ -191,7 +192,7 @@ $services = services_list(true);
                                 <?php endforeach; ?>
                             </div>
                         <?php endif; ?>
-                        <p class="text-muted mb-0"><?php echo e($show['description']); ?></p>
+                        <p class="text-muted mb-0"><?php echo e($briefDescription); ?></p>
                         <a href="<?php echo e(url('shows/' . $show['slug'])); ?>" data-pjax class="stretched-link" aria-label="View details for <?php echo e($show['title']); ?>"></a>
                     </article>
                 </div>

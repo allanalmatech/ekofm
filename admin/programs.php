@@ -16,6 +16,21 @@ if (!$hasFocusY) {
     db_query("ALTER TABLE programs ADD COLUMN cover_focus_y TINYINT UNSIGNED NOT NULL DEFAULT 50 AFTER cover_focus_x");
 }
 
+$hasBriefDescription = db_query("SHOW COLUMNS FROM programs LIKE 'brief_description'")->fetch();
+if (!$hasBriefDescription) {
+    db_query("ALTER TABLE programs ADD COLUMN brief_description TEXT NULL AFTER end_time");
+}
+
+$hasFullDescription = db_query("SHOW COLUMNS FROM programs LIKE 'full_description'")->fetch();
+if (!$hasFullDescription) {
+    db_query("ALTER TABLE programs ADD COLUMN full_description MEDIUMTEXT NULL AFTER brief_description");
+}
+
+$hasWhatToExpect = db_query("SHOW COLUMNS FROM programs LIKE 'what_to_expect'")->fetch();
+if (!$hasWhatToExpect) {
+    db_query("ALTER TABLE programs ADD COLUMN what_to_expect MEDIUMTEXT NULL AFTER full_description");
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verify_csrf($_POST['_token'])) {
         redirect('admin/programs.php');
@@ -29,7 +44,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $dayOfWeek = isset($_POST['day_of_week']) ? trim($_POST['day_of_week']) : '';
     $startTime = isset($_POST['start_time']) ? trim($_POST['start_time']) : null;
     $endTime = isset($_POST['end_time']) ? trim($_POST['end_time']) : null;
-    $description = isset($_POST['description']) ? trim($_POST['description']) : '';
+    $briefDescription = isset($_POST['brief_description']) ? trim($_POST['brief_description']) : '';
+    $fullDescription = isset($_POST['full_description']) ? trim($_POST['full_description']) : '';
+    $whatToExpect = isset($_POST['what_to_expect']) ? trim($_POST['what_to_expect']) : '';
+
+    if ($briefDescription === '' && isset($_POST['description'])) {
+        $briefDescription = trim($_POST['description']);
+    }
+    if ($fullDescription === '' && $briefDescription !== '') {
+        $fullDescription = $briefDescription;
+    }
+
+    $description = $briefDescription;
     $status = isset($_POST['status']) ? (int) $_POST['status'] : 1;
     $coverFocusX = isset($_POST['cover_focus_x']) ? max(0, min(100, (int) $_POST['cover_focus_x'])) : 50;
     $coverFocusY = isset($_POST['cover_focus_y']) ? max(0, min(100, (int) $_POST['cover_focus_y'])) : 50;
@@ -44,13 +70,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($id > 0) {
         db_query(
-            'UPDATE programs SET title=?, slug=?, presenter=?, cover_image=?, cover_focus_x=?, cover_focus_y=?, day_of_week=?, start_time=?, end_time=?, description=?, status=?, updated_at=NOW() WHERE id=?',
-            array($title, $slug, $presenter, $coverImage, $coverFocusX, $coverFocusY, $dayOfWeek, $startTime, $endTime, $description, $status, $id)
+            'UPDATE programs SET title=?, slug=?, presenter=?, cover_image=?, cover_focus_x=?, cover_focus_y=?, day_of_week=?, start_time=?, end_time=?, description=?, brief_description=?, full_description=?, what_to_expect=?, status=?, updated_at=NOW() WHERE id=?',
+            array($title, $slug, $presenter, $coverImage, $coverFocusX, $coverFocusY, $dayOfWeek, $startTime, $endTime, $description, $briefDescription, $fullDescription, $whatToExpect, $status, $id)
         );
     } else {
         db_query(
-            'INSERT INTO programs (title, slug, presenter, cover_image, cover_focus_x, cover_focus_y, day_of_week, start_time, end_time, description, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())',
-            array($title, $slug, $presenter, $coverImage, $coverFocusX, $coverFocusY, $dayOfWeek, $startTime, $endTime, $description, $status)
+            'INSERT INTO programs (title, slug, presenter, cover_image, cover_focus_x, cover_focus_y, day_of_week, start_time, end_time, description, brief_description, full_description, what_to_expect, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())',
+            array($title, $slug, $presenter, $coverImage, $coverFocusX, $coverFocusY, $dayOfWeek, $startTime, $endTime, $description, $briefDescription, $fullDescription, $whatToExpect, $status)
         );
     }
 
@@ -124,6 +150,9 @@ include __DIR__ . '/../templates/admin_header.php';
                                 data-day="<?php echo e($r['day_of_week']); ?>"
                                 data-start-time="<?php echo e($r['start_time']); ?>"
                                 data-end-time="<?php echo e($r['end_time']); ?>"
+                                data-brief-description="<?php echo e(isset($r['brief_description']) ? $r['brief_description'] : $r['description']); ?>"
+                                data-full-description="<?php echo e(isset($r['full_description']) ? $r['full_description'] : $r['description']); ?>"
+                                data-what-to-expect="<?php echo e(isset($r['what_to_expect']) ? $r['what_to_expect'] : ''); ?>"
                                 data-description="<?php echo e($r['description']); ?>"
                                 data-status="<?php echo e((int) $r['status']); ?>"
                                 data-image="<?php echo e($r['cover_image']); ?>"
@@ -160,6 +189,10 @@ include __DIR__ . '/../templates/admin_header.php';
                     <input type="hidden" name="cover_focus_y" id="programFocusY" value="50">
 
                     <div class="row g-2">
+                        <div class="col-12">
+                            <h6 class="mb-1">Basic Information</h6>
+                            <hr class="mt-0 mb-2">
+                        </div>
                         <div class="col-md-6">
                             <label class="form-label">Title</label>
                             <input class="form-control" name="title" id="programTitle" required>
@@ -184,9 +217,30 @@ include __DIR__ . '/../templates/admin_header.php';
                             <label class="form-label">End Time</label>
                             <input class="form-control" type="time" name="end_time" id="programEndTime" value="08:00">
                         </div>
+
+                        <div class="col-12 mt-2">
+                            <h6 class="mb-1">Description Sections</h6>
+                            <hr class="mt-0 mb-2">
+                        </div>
                         <div class="col-md-12">
-                            <label class="form-label">Description</label>
-                            <textarea class="form-control" rows="4" name="description" id="programDescription"></textarea>
+                            <label class="form-label">Brief Description</label>
+                            <textarea class="form-control" rows="3" name="brief_description" id="programBriefDescription"></textarea>
+                            <small class="text-muted d-block mt-1">Shown on cards/listings.</small>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Full Description</label>
+                            <textarea class="form-control" rows="5" name="full_description" id="programFullDescription"></textarea>
+                            <small class="text-muted d-block mt-1">Shown on the show details page.</small>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">What To Expect (optional)</label>
+                            <textarea class="form-control" rows="4" name="what_to_expect" id="programWhatToExpect" placeholder="Bullet points or short paragraph."></textarea>
+                            <small class="text-muted d-block mt-1">If empty, this section is hidden on the show details page.</small>
+                        </div>
+
+                        <div class="col-12 mt-2">
+                            <h6 class="mb-1">Publishing & Media</h6>
+                            <hr class="mt-0 mb-2">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Status</label>
@@ -232,7 +286,9 @@ include __DIR__ . '/../templates/admin_header.php';
     var dayInput = document.getElementById('programDay');
     var startInput = document.getElementById('programStartTime');
     var endInput = document.getElementById('programEndTime');
-    var descriptionInput = document.getElementById('programDescription');
+    var briefDescriptionInput = document.getElementById('programBriefDescription');
+    var fullDescriptionInput = document.getElementById('programFullDescription');
+    var whatToExpectInput = document.getElementById('programWhatToExpect');
     var statusInput = document.getElementById('programStatus');
     var imageHint = document.getElementById('programImageHint');
     var imageInput = document.getElementById('programImageInput');
@@ -265,7 +321,9 @@ include __DIR__ . '/../templates/admin_header.php';
         dayInput.value = data.day || 'Monday';
         startInput.value = data.startTime || '06:00';
         endInput.value = data.endTime || '08:00';
-        descriptionInput.value = data.description || '';
+        briefDescriptionInput.value = data.briefDescription || data.description || '';
+        fullDescriptionInput.value = data.fullDescription || data.briefDescription || data.description || '';
+        whatToExpectInput.value = data.whatToExpect || '';
         statusInput.value = String(data.status || 1);
         imageHint.textContent = data.image ? ('Current image: ' + data.image) : 'Upload image (jpg, jpeg, png, webp).';
         setPreviewImage(data.image ? data.imageUrl : '');
@@ -288,6 +346,9 @@ include __DIR__ . '/../templates/admin_header.php';
                 day: this.getAttribute('data-day') || 'Monday',
                 startTime: this.getAttribute('data-start-time') || '06:00',
                 endTime: this.getAttribute('data-end-time') || '08:00',
+                briefDescription: this.getAttribute('data-brief-description') || '',
+                fullDescription: this.getAttribute('data-full-description') || '',
+                whatToExpect: this.getAttribute('data-what-to-expect') || '',
                 description: this.getAttribute('data-description') || '',
                 status: parseInt(this.getAttribute('data-status') || '1', 10),
                 image: this.getAttribute('data-image') || '',
