@@ -114,7 +114,7 @@ $services = services_list(true);
                                     <a
                                         href="<?php echo e($button['href']); ?>"
                                         <?php if (!$button['external']): ?>data-pjax<?php endif; ?>
-                                        <?php if ($button['external']): ?>target="_blank" rel="noopener"<?php endif; ?>
+                                        <?php if ($button['external']): ?> rel="noopener"<?php endif; ?>
                                         class="<?php echo e($button['class']); ?>"
                                     >
                                         <?php echo e($button['text']); ?>
