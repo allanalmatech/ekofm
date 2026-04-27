@@ -32,12 +32,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <p class="mb-2"><strong>Address:</strong><br><?php echo e(setting('contact_address', 'Abim Road, Lokore Cells, Near Boma Grounds')); ?><br><?php echo e(setting('contact_location', 'Kotido, Karamoja, Uganda')); ?></p>
                 <p class="mb-2"><strong>Phone:</strong> <?php echo e(setting('contact_phone', '+256 751 161 355')); ?></p>
-                <p class="mb-2"><strong>Email:</strong> <?php echo e(setting('contact_email', 'info@eko.fm')); ?></p>
+
                 <p class="mb-3"><strong>Station WhatsApp:</strong> <?php echo e(setting('contact_whatsapp', '0791 996450')); ?></p>
 
                 <a class="btn btn-live btn-sm mb-3" href="<?php echo e(whatsapp_link(setting('contact_whatsapp', '0791996450'))); ?>" target="_blank">Chat on WhatsApp</a>
+
+                <div id="map"></div>
                 <?php if ($contactMapEmbed !== ''): ?>
-                    <div class="ratio ratio-4x3 rounded-3 overflow-hidden border" id="map">
+                    <div class="ratio ratio-4x3 rounded-3 overflow-hidden border" >
                         
                         <?php echo $contactMapEmbed; ?>
                     </div>
