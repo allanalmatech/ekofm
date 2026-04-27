@@ -38,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <a class="btn btn-live btn-sm mb-3" href="<?php echo e(whatsapp_link(setting('contact_whatsapp', '0791996450'))); ?>" target="_blank">Chat on WhatsApp</a>
                 <?php if ($contactMapEmbed !== ''): ?>
                     <div class="ratio ratio-4x3 rounded-3 overflow-hidden border">
+                        <a href="#map">Map</a>
                         <?php echo $contactMapEmbed; ?>
                     </div>
                 <?php else: ?>
